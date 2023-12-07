@@ -4,13 +4,13 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 
 const app = express();
-const port = 5000;
+const port = 3001;
 
 // Create connection to the database
 const db = mysql.createConnection({
-    host: 'db4free.net', // Replace with your database host
-    user: 'phucnhan0406', // Replace with your database username
-    password: 'phucnhan0406@', // Replace with your database password
+    host: 'db4free.net',
+    user: 'phucnhan0406',
+    password: 'phucnhan0406@',
     database: 'sales_clock',
 });
 
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
 
-    const sql = 'INSERT INTO Users (name, email, password) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
     db.query(sql, [name, email, password], (err, result) => {
         if (err) {
             console.error('Error executing query:', err);
@@ -45,7 +45,7 @@ app.post('/api/register', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
-    const sql = 'SELECT * FROM Users WHERE email = ? AND password = ?';
+    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
     db.query(sql, [email, password], (err, result) => {
         if (err) {
             console.error('Error executing query:', err);
