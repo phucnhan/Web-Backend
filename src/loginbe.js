@@ -26,11 +26,16 @@ db.connect((err) => {
 // Middleware to parse incoming JSON requests
 app.use(bodyParser.json());
 
-// Register route for user registration
+// Route for user registration
 app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
 
-    const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+    // Ensure that 'name', 'email', and 'password' are provided
+    if (!name || !email || !password) {
+        return res.status(400).send('Name, email, and password are required');
+    }
+
+    const sql = 'INSERT INTO Users (username, email, password) VALUES (?, ?, ?)';
     db.query(sql, [name, email, password], (err, result) => {
         if (err) {
             console.error('Error executing query:', err);
@@ -43,20 +48,20 @@ app.post('/api/register', (req, res) => {
 
 // Route for user login
 app.post('/api/login', (req, res) => {
-    const { email, password } = req.body;
+    const { mail, password } = req.body;
 
-    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-    db.query(sql, [email, password], (err, result) => {
+    const sql = 'SELECT * FROM Users WHERE email = ? AND password = ?';
+    db.query(sql, [mail, password], (err, result) => {
         if (err) {
             console.error('Error executing query:', err);
-            res.status(500).send('Error logging in');
+            res.status(500).json({ error: 'Error logging in' });
             return;
         }
 
         if (result.length > 0) {
-            res.status(200).send('Login successful');
+            res.status(200).json({ message: 'Login successful' });
         } else {
-            res.status(401).send('Invalid credentials');
+            res.status(401).json({ error: 'Invalid credentials' });
         }
     });
 });
