@@ -9,7 +9,7 @@ const port = 3001;
 // Create connection to the database
 const db = mysql.createConnection({
     host: 'db4free.net',
-    user: 'phucnhan0406',
+    user: Process.env.username,
     password: 'phucnhan0406@',
     database: 'sales_clock',
 });
@@ -29,11 +29,7 @@ app.use(bodyParser.json());
 // Route for user registration
 app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
-
     // Ensure that 'name', 'email', and 'password' are provided
-    if (!name || !email || !password) {
-        return res.status(400).send('Name, email, and password are required');
-    }
 
     const sql = 'INSERT INTO Users (username, email, password) VALUES (?, ?, ?)';
     db.query(sql, [name, email, password], (err, result) => {
