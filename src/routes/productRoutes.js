@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const productController = require('../productController');
+const productController = require('../controllers/productController'); // Removed '.js'
 
 // Define your product-related routes (similar to the previous example)
 
