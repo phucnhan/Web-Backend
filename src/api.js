@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-
+const productRoutes = require('./routes/productRoutes');
 const api = express();
 const PORT = process.env.PORT || 3001;
 
@@ -25,3 +25,5 @@ api.use((err, req, res, next) => {
 api.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+
