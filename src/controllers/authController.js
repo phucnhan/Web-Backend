@@ -1,12 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const { createUser, findUserByEmail } = require(path.join(__dirname, '..', 'api'));
-
-// Rest of your code...
-
-
-
+const { createUser, findUserByEmail } = require('../db');
 
 const register = async (req, res) => {
     try {
@@ -41,7 +36,6 @@ const login = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
         }
 
-        // JWT signing with the secret from the .env file
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ success: true, token });

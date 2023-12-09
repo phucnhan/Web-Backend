@@ -1,50 +1,39 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const path = require('path');
-const { createUserTable, createUser, findUserByEmail } = require('./api');
+const mysql = require('mysql2/promise'); // Import the promise-based version
 
-// Rest of your code...
+// Database configuration for MySQL
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    connectTimeout: 15000,
+});
 
-const register = async (req, res) => {
+
+// Function to create a new user
+const createUser = async (username, email, password) => {
+    const connection = await pool.getConnection();
     try {
-        const { name, email, password } = req.body;
-
-        if (!name || !email || !password) {
-            return res.status(400).json({ success: false, message: 'Name, email, and password are required.' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await createUser(name, email, hashedPassword);
-
-        res.json({ success: true, message: 'User registered successfully.' });
-    } catch (error) {
-        console.error('Error during registration:', error);
-        res.status(500).json({ success: false, message: 'Internal server error during registration.' });
+        await connection.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, password]);
+        console.log('User created successfully');
+    } finally {
+        connection.release();
     }
 };
 
-const login = async (req, res) => {
+// Function to find a user by email
+const findUserByEmail = async (email) => {
+    const connection = await pool.getConnection();
     try {
-        const { email, password } = req.body;
-        const user = await findUserByEmail(email);
-
-        if (!user) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordMatch) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        }
-
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.json({ success: true, token });
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ success: false, message: 'Internal server error during login.' });
+        const [rows] = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
+        return rows[0];
+    } finally {
+        connection.release();
     }
 };
 
-module.exports = { register, login };
+module.exports = { createUser, findUserByEmail };
