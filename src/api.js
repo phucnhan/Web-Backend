@@ -7,13 +7,15 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const api = express();
 const PORT = process.env.PORT || 3001;
+const path = require('path');
 
 // Middleware
 api.use(cors());
 api.use(bodyParser.json());
 
 // Routes
-api.use('/api', authRoutes);
+api.use('/api/auth', authRoutes); // Assuming auth routes are mounted at /api/auth
+api.use('/api/products', productRoutes); // Mount product routes at /api/products
 
 // Error handling middleware
 api.use((err, req, res, next) => {
@@ -21,9 +23,12 @@ api.use((err, req, res, next) => {
     res.status(500).json({ success: false, message: 'Internal server error.' });
 });
 
+// Serve static files (images) from multiple folders
+api.use('/category', express.static(path.join(__dirname, 'category')));
+api.use('/manufacturer', express.static(path.join(__dirname, 'manufacturer')));
+api.use('/product', express.static(path.join(__dirname, 'product')));
+
 // Start the server
 api.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-

@@ -1,9 +1,13 @@
-// routes/productRoutes.js
+// server/routes/productRoutes.js
 
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/productController'); // Removed '.js'
+const productController = require('../controllers/productController');
 
-// Define your product-related routes (similar to the previous example)
+// Define routes for products
+router.get('/products', productController.fetchProducts);
+router.post('/products', productController.addProduct);
+router.put('/products/:id', productController.updateProduct);
+router.delete('/products/:id', productController.deleteProduct);
 
 module.exports = router;
