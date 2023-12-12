@@ -24,9 +24,9 @@ api.use((err, req, res, next) => {
 });
 
 // Serve static files (images) from multiple folders
-api.use('/category', express.static(path.join(__dirname, 'category')));
-api.use('/manufacturer', express.static(path.join(__dirname, 'manufacturer')));
-api.use('/product', express.static(path.join(__dirname, 'product')));
+api.use('/category', express.static(path.join(__dirname, 'images/category')));
+api.use('/manufacturer', express.static(path.join(__dirname, 'images/manufacturer')));
+api.use('/product', express.static(path.join(__dirname, 'images/product')));
 
 // Start the server
 api.listen(PORT, () => {
