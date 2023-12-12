@@ -36,4 +36,47 @@ const findUserByEmail = async (email) => {
     }
 };
 
-module.exports = { createUser, findUserByEmail };
+const createProduct = async (name, price, description, image_path) => {
+    const connection = await pool.getConnection();
+    try {
+        await connection.execute('INSERT INTO products (name, price, description, image_path) VALUES (?, ?, ?, ?)', [name, price, description, image_path]);
+        console.log('Product created successfully');
+    } finally {
+        connection.release();
+    }
+};
+
+const fetchProducts = async () => {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute('SELECT * FROM products');
+        return rows;
+    } finally {
+        connection.release();
+    }
+};
+
+const updateProduct = async (id, updatedFields) => {
+    const connection = await pool.getConnection();
+    try {
+        const [result] = await connection.execute('UPDATE products SET ? WHERE id = ?', [updatedFields, id]);
+        console.log('Product updated successfully');
+        return result;
+    } finally {
+        connection.release();
+    }
+};
+
+const deleteProduct = async (id) => {
+    const connection = await pool.getConnection();
+    try {
+        const [result] = await connection.execute('DELETE FROM products WHERE id = ?', [id]);
+        console.log('Product deleted successfully');
+        return result;
+    } finally {
+        connection.release();
+    }
+};
+
+module.exports = { createUser, findUserByEmail, createProduct, fetchProducts, updateProduct, deleteProduct };
+
