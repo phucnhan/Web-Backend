@@ -1,5 +1,5 @@
-//db.js
-const mysql = require('mysql2/promise'); // Import the promise-based version
+
+const mysql = require('mysql2/promise');
 
 // Database configuration for MySQL
 const pool = mysql.createPool({
@@ -13,7 +13,6 @@ const pool = mysql.createPool({
     queueLimit: 0,
     connectTimeout: 60000,
 });
-
 
 // Function to create a new user
 const createUser = async (username, email, password) => {
@@ -37,6 +36,7 @@ const findUserByEmail = async (email) => {
     }
 };
 
+// Function to create a new product
 const createProduct = async (name, price, description, image_path) => {
     const connection = await pool.getConnection();
     try {
@@ -47,6 +47,7 @@ const createProduct = async (name, price, description, image_path) => {
     }
 };
 
+// Function to fetch all products
 const fetchProducts = async () => {
     const connection = await pool.getConnection();
     try {
@@ -57,14 +58,22 @@ const fetchProducts = async () => {
     }
 };
 
+// Function to fetch a product by ID
+const fetchProductById = async (productId) => {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [productId]);
+        return rows[0];
+    } finally {
+        connection.release();
+    }
+};
+
+// Function to update a product by ID
 const updateProduct = async (id, updatedFields) => {
     const connection = await pool.getConnection();
     try {
-        const { name, price, description, image_path } = updatedFields;
-        const [result] = await connection.execute(
-            'UPDATE products SET name = ?, price = ?, description = ?, image_path = ? WHERE id = ?',
-            [name, price, description, image_path, id]
-        );
+        const [result] = await connection.execute('UPDATE products SET ? WHERE id = ?', [updatedFields, id]);
         console.log('Product updated successfully');
         return result;
     } finally {
@@ -72,7 +81,7 @@ const updateProduct = async (id, updatedFields) => {
     }
 };
 
-
+// Function to delete a product by ID
 const deleteProduct = async (id) => {
     const connection = await pool.getConnection();
     try {
@@ -84,16 +93,20 @@ const deleteProduct = async (id) => {
     }
 };
 
-const findProductById = async (id) => {
+const updateUserCart = async (userId, cart) => {
     const connection = await pool.getConnection();
     try {
-        const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
-        return rows[0];
+        const query = 'UPDATE users SET cart = ? WHERE id = ?';
+        const params = [JSON.stringify(cart), userId];
+        console.log('SQL query:', query);
+        console.log('SQL parameters:', params);
+
+        const [result] = await connection.execute(query, params);
+        console.log('User cart updated successfully', result);
     } finally {
         connection.release();
     }
 };
 
 
-module.exports = { createUser, findUserByEmail, createProduct, fetchProducts, updateProduct, deleteProduct, findProductById };
-
+module.exports = { createUser, findUserByEmail, createProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, updateUserCart };
