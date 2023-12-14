@@ -59,13 +59,18 @@ const fetchProducts = async () => {
 const updateProduct = async (id, updatedFields) => {
     const connection = await pool.getConnection();
     try {
-        const [result] = await connection.execute('UPDATE products SET ? WHERE id = ?', [updatedFields, id]);
+        const { name, price, description, image_path } = updatedFields;
+        const [result] = await connection.execute(
+            'UPDATE products SET name = ?, price = ?, description = ?, image_path = ? WHERE id = ?',
+            [name, price, description, image_path, id]
+        );
         console.log('Product updated successfully');
         return result;
     } finally {
         connection.release();
     }
 };
+
 
 const deleteProduct = async (id) => {
     const connection = await pool.getConnection();
@@ -78,5 +83,16 @@ const deleteProduct = async (id) => {
     }
 };
 
-module.exports = { createUser, findUserByEmail, createProduct, fetchProducts, updateProduct, deleteProduct };
+const findProductById = async (id) => {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
+        return rows[0];
+    } finally {
+        connection.release();
+    }
+};
+
+
+module.exports = { createUser, findUserByEmail, createProduct, fetchProducts, updateProduct, deleteProduct, findProductById };
 

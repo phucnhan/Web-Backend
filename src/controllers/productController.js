@@ -26,7 +26,20 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updatedFields = req.body;
+
+    // Validate if ID is provided
+    if (!id) {
+        return res.status(400).json({ success: false, message: 'Product ID is required for update.' });
+    }
+
+    // Check if the product with the provided ID exists
+    const existingProduct = await db.findProductById(id);
+    if (!existingProduct) {
+        return res.status(404).json({ success: false, message: 'Product not found.' });
+    }
+
     try {
+        // Update the product
         await db.updateProduct(id, updatedFields);
         res.json({ success: true, message: 'Product updated successfully' });
     } catch (error) {
@@ -47,13 +60,13 @@ const deleteProduct = async (req, res) => {
 };
 
 const viewProducts = async (req, res) => {
-  try {
-    const products = await db.fetchProducts();
-    res.json(products);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
+    try {
+        const products = await db.fetchProducts();
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
 };
 
-module.exports = { fetchProducts, addProduct, updateProduct, deleteProduct, viewProducts  };
+module.exports = { fetchProducts, addProduct, updateProduct, deleteProduct, viewProducts };
