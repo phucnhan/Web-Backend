@@ -1,3 +1,4 @@
+//db.js
 const mysql = require('mysql2/promise'); // Import the promise-based version
 
 // Database configuration for MySQL

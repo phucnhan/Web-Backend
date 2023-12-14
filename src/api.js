@@ -1,3 +1,4 @@
+//api.js
 require('dotenv').config();
 
 const express = require('express');
@@ -16,9 +17,7 @@ api.use(express.json());
 api.use(bodyParser.json());
 
 // Serve static files (images) from multiple folders
-api.use('/category', express.static(path.join(__dirname, 'images/category')));
-api.use('/manufacturer', express.static(path.join(__dirname, 'images/manufacturer')));
-api.use('/product', express.static(path.join(__dirname, 'images/product')));
+api.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Routes
 api.use('/api/auth', authRoutes); // Assuming auth routes are mounted at /api/auth

@@ -1,10 +1,10 @@
-// controllers/productController.js
-
+//productController.js
 const db = require('../db');
 
 const fetchProducts = async (req, res) => {
     try {
         const products = await db.fetchProducts();
+        console.log('Fetched products:', products); // Add this line for debugging
         res.json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -69,4 +69,18 @@ const viewProducts = async (req, res) => {
     }
 };
 
-module.exports = { fetchProducts, addProduct, updateProduct, deleteProduct, viewProducts };
+const viewProductById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await db.findProductById(id);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found.' });
+        }
+        res.json(product);
+    } catch (error) {
+        console.error('Error fetching product by ID:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+};
+
+module.exports = { fetchProducts, addProduct, updateProduct, deleteProduct, viewProducts, viewProductById };
