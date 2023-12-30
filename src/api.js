@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const viewRoutes = require('./routes/viewRoutes');
+const { swaggerUi, specs } = require('./swagger');
 const api = express();
 const PORT = process.env.PORT || 3001;
 const path = require('path');
@@ -16,6 +17,8 @@ api.use(express.json());
 // Serve static files (images) from multiple folders
 api.use('/images', express.static(path.join(__dirname, 'images')));
 
+//Swagger
+api.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Routes
 api.use('/api/auth', authRoutes); // Assuming auth routes are mounted at /api/auth
 api.use('/api/products', productRoutes); // Mount product routes at /api/products
