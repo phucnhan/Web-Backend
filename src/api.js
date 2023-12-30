@@ -5,7 +5,6 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const viewRoutes = require('./routes/viewRoutes');
-const cartRoutes = require('./routes/cartRoutes');
 const api = express();
 const PORT = process.env.PORT || 3001;
 const path = require('path');
@@ -21,7 +20,6 @@ api.use('/images', express.static(path.join(__dirname, 'images')));
 api.use('/api/auth', authRoutes); // Assuming auth routes are mounted at /api/auth
 api.use('/api/products', productRoutes); // Mount product routes at /api/products
 api.use('/api/view', viewRoutes);
-api.use('/api/cart', cartRoutes);
 
 // Error handling middleware
 api.use((err, req, res, next) => {
